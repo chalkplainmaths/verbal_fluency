@@ -7,36 +7,35 @@ class serverManager {
 
 	// initialise the session
 	async start() {
-		await this.getConfig();
+		this.config = await this.getConfig();
 		this.session = await this.openSession();
 	}
 
 	// end, maybe the start() and end() methods are unnecessary, could take out in future
 	async end() {
-		this.closeSession();
+		this.close = await this.closeSession();
 	}
 
 	// get configuration values from the .json pavlovia generates
 	async getConfig() {
 		const config = await fetch("config.json");
-		this.config_json = await config.json();
-		return 0;
+		return await config.json();
 	}
 
 	// open the session with pavlovia.org and store related data (e.g. the session token)
 	async openSession() {
-		const url = this.config_json.pavlovia.URL
+		const url = this.config.pavlovia.URL
 			+ "api/v2/experiments/"
-			+ this.config_json.gitlab.projectId
+			+ this.config.gitlab.projectId
 			+ "/sessions";
 		return await this.queryServer(url, "POST", {});
 	}
 
 	// close the session
 	async closeSession() {
-		const url = this.config_json.pavlovia.URL
+		const url = this.config.pavlovia.URL
 			+ "api/v2/experiments/"
-			+ this.config_json.gitlab.projectId
+			+ this.config.gitlab.projectId
 			+ "/sessions/"
 			+ this.session.token
 			+ "/delete";
@@ -50,9 +49,9 @@ class serverManager {
 		const form = new FormData();
 		form.append("key", filename);
 		form.append("value", filecontents);
-		const url = this.config_json.pavlovia.URL
+		const url = this.config.pavlovia.URL
 			+ "api/v2/experiments/"
-			+ this.config_json.gitlab.projectId
+			+ this.config.gitlab.projectId
 			+ "/sessions/"
 			+ this.session.token
 			+ "/results";
