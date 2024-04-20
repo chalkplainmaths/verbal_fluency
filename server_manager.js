@@ -1,50 +1,96 @@
+// class to allow communication with pavlovia.org api, heavily based on ServerManager.js from PsychoJS
+// need to add an option to use beacon in event of user closing window
+
 class serverManager {
 	constructor() {
-		this.url_params = new URLSearchParams( window.location.search.slice(1) );
 	}
+
+	// initialise the session
 	async init() {
-		//const result = await this.getConfig();
 		await this.getConfig();
 		this.openSession();
 	}
+
+	// get configuration values from the .json pavlovia generates
 	async getConfig() {
 		const config = await fetch("config.json");
 		this.config_json = await config.json();
 		return 0;
 	}
+
+	// open the session with pavlovia.org and store related data (e.g. the session token)
 	async openSession() {
-		const url = this.config_json.pavlovia.URL;
-		const id = this.config_json.gitlab.projectId;
-		const full_url = url + "api/v2/experiments/" + id + "/sessions";
-		const response = await fetch(full_url, {
+		const url = this.config_json.pavlovia.URL
+			+ "api/v2/experiments/"
+			+ this.config_json.pavlovia.URL
+			+ "/sessions";
+		/*const response = await fetch(full_url, {
 			method: "POST",
 			mode: "cors",
 			credentials: "same-origin",
 			redirect: "follow",
 			referrerPolicy: "no-referrer",
 			body: {}
-		});
-		this.session = await response.json();
+		});*/
+		this.session = await queryServer(url, "POST", {});
 	}
+
+	//
 	async closeSession() {
+		const url = this.config_json.pavlovia.URL
+			+ "api/v2/experiments/"
+			+ this.config_json.pavlovia.URL
+			+ "/sessions/"
+			+ this.config_json.session.token;
+		/*const response = await fetch(full_url, {
+			method: "DELETE",
+			mode: "cors",
+			credentials: "same-origin",
+			redirect: "follow",
+			referrerPolicy: "no-referrer",
+			body: {}
+		});*/
+		const response = await queryServer(url, "DELETE", {});
 	}
-	async uploadData() {
+
+	// upload data using our session token
+	async uploadData(filename = "serverManager.uploadData_default_name", filecontents = "serverManager.uploadData,default,data") {
 		const form = new FormData();
-		form.append("key", "data_001.csv");
-		form.append("value", "data:text/csv;charset=utf-8,thing,otherthing,\r\n");
-		const url = this.config_json.pavlovia.URL;
-		const id = this.config_json.gitlab.projectId;
-		const token = this.session.token;
-		const full_url = url + "api/v2/experiments/" + id + "/sessions/" + token + "/results";
-		const response = await fetch(full_url, {
+		form.append("key", filename);
+		form.append("value", filecontents);
+		const url = this.config_json.pavlovia.URL
+			+ "api/v2/experiments/"
+			+ this.config_json.gitlab.projectId
+			+ "/sessions/"
+			+ this.session.token
+			+ "/results";
+		/*const response = await fetch(full_url, {
 			method: "POST",
 			mode: "cors",
 			credentials: "same-origin",
 			redirect: "follow",
 			referrerPolicy: "no-referrer",
 			body: form
-		});
+		});*/
+		const response = await queryServer(url, "POST", form);
+		if (response.status !== 200)
+			console.warn("Data upload to server was unsuccessful.");
 	}
+
+	async queryServer(url, _method, data) {
+		const response = await fetch(url, {
+			method: _method,
+			mode: "cors",
+			credentials: "same-origin",
+			redirect: "follow",
+			referrerPolicy: "no-referrer",
+			body: data
+		});
+		const response_json = await response.json();
+		return response.json;
+	}
+
+	//
 	async uploadMedia() {
 	}
 }
