@@ -37,8 +37,8 @@ class serverManager {
 			+ "api/v2/experiments/"
 			+ this.config.gitlab.projectId
 			+ "/sessions/"
-			+ this.session.token
-			+ "/delete";
+			+ this.session.token;
+			//+ "/delete";
 		const form = new FormData();
 		form.append("isCompleted", true);
 		return await this.queryServer(url, "DELETE", form);
