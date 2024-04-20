@@ -54,7 +54,7 @@ class serverManager {
 	}
 
 	// upload data using our session token
-	async uploadData(filename = "serverManager.uploadData_default_name", filecontents = "serverManager.uploadData,default,data") {
+	async uploadData(filename = "serverManager.uploadData_default_name.csv", filecontents = "serverManager.uploadData,default,data") {
 		const form = new FormData();
 		form.append("key", filename);
 		form.append("value", filecontents);
@@ -73,8 +73,8 @@ class serverManager {
 			body: form
 		});*/
 		const response = await this.queryServer(url, "POST", form);
-		if (response.status !== 200)
-			console.warn("Data upload to server was unsuccessful.");
+		/*if (response.status !== 200)
+			console.warn("Data upload to server was unsuccessful.");*/
 	}
 
 	async queryServer(url, _method, data) {
