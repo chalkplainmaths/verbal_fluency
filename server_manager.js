@@ -4,7 +4,7 @@ class serverManager {
 	}
 	async init() {
 		const result = await this.getConfig();
-		openSession();
+		this.openSession();
 	}
 	async getConfig() {
 		const config = await fetch("config.json");
