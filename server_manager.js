@@ -32,7 +32,7 @@ class serverManager {
 		const url = this.config_json.pavlovia.URL
 			+ "api/v2/experiments/"
 			+ this.config_json.gitlab.projectId
-			+ "/sessions/"
+			+ "/sessions/delete"
 			+ this.session.token;
 		const form = new FormData();
 		form.append("isCompleted", true);
