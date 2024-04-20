@@ -3,6 +3,6 @@ class Fluency {
         this.server_manager = new serverManager();
     }
     start() {
-        this.server_manager.init();
+        this.server_manager.start();
     }
 }
