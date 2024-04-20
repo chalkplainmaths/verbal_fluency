@@ -24,7 +24,7 @@ class serverManager {
 			referrerPolicy: "no-referrer",
 			body: form
 		});
-		this.session_data = await response.json();
+		this.session = await response.json();
 	}
 	async closeSession() {
 	}
