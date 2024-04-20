@@ -6,9 +6,14 @@ class serverManager {
 	}
 
 	// initialise the session
-	async init() {
+	async start() {
 		await this.getConfig();
-		this.openSession();
+		this.session = await this.openSession();
+	}
+
+	// end, maybe the start() and end() methods are unnecessary, could take out in future
+	async end() {
+		this.closeSession();
 	}
 
 	// get configuration values from the .json pavlovia generates
@@ -24,7 +29,7 @@ class serverManager {
 			+ "api/v2/experiments/"
 			+ this.config_json.gitlab.projectId
 			+ "/sessions";
-		this.session = await this.queryServer(url, "POST", {});
+		return await this.queryServer(url, "POST", {});
 	}
 
 	// close the session
@@ -37,7 +42,7 @@ class serverManager {
 			+ "/delete";
 		const form = new FormData();
 		form.append("isCompleted", true);
-		this.sresponse = await this.queryServer(url, "POST", form);
+		return await this.queryServer(url, "POST", form);
 	}
 
 	// upload data using our session token
@@ -51,7 +56,7 @@ class serverManager {
 			+ "/sessions/"
 			+ this.session.token
 			+ "/results";
-		const response = await this.queryServer(url, "POST", form);
+		return await this.queryServer(url, "POST", form);
 	}
 
 	// send a query to the server
