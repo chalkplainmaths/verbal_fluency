@@ -32,7 +32,7 @@ class serverManager {
 			referrerPolicy: "no-referrer",
 			body: {}
 		});*/
-		this.session = await queryServer(url, "POST", {});
+		this.session = await this.queryServer(url, "POST", {});
 	}
 
 	//
@@ -50,7 +50,7 @@ class serverManager {
 			referrerPolicy: "no-referrer",
 			body: {}
 		});*/
-		const response = await queryServer(url, "DELETE", {});
+		const response = await this.queryServer(url, "DELETE", {});
 	}
 
 	// upload data using our session token
@@ -72,7 +72,7 @@ class serverManager {
 			referrerPolicy: "no-referrer",
 			body: form
 		});*/
-		const response = await queryServer(url, "POST", form);
+		const response = await this.queryServer(url, "POST", form);
 		if (response.status !== 200)
 			console.warn("Data upload to server was unsuccessful.");
 	}
