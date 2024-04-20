@@ -12,7 +12,6 @@ class serverManager {
 		return 0;
 	}
 	async openSession() {
-		const form = {};
 		const url = this.config_json.pavlovia.URL;
 		const id = this.config_json.gitlab.projectId;
 		const full_url = url + "api/v2/experiments/" + id + "/sessions";
@@ -22,7 +21,7 @@ class serverManager {
 			credentials: "same-origin",
 			redirect: "follow",
 			referrerPolicy: "no-referrer",
-			body: form
+			body: {}
 		});
 		this.session = await response.json();
 	}
@@ -32,9 +31,9 @@ class serverManager {
 		const form = new FormData();
 		form.append("key", "data_001.csv");
 		form.append("value", "data:text/csv;charset=utf-8,thing,otherthing,\r\n");
-		const url = await this.config_json.pavlovia.URL;
-		const id = await this.config_json.gitlab.projectId;
-		const token = await this.session.token;
+		const url = this.config_json.pavlovia.URL;
+		const id = this.config_json.gitlab.projectId;
+		const token = this.session.token;
 		const full_url = url + "api/v2/experiments/" + id + "/sessions/" + token + "/results";
 		const response = await fetch(full_url, {
 			method: "POST",
