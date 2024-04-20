@@ -3,7 +3,7 @@ class serverManager {
 		this.url_params = new URLSearchParams( window.location.search.slice(1) );
 	}
 	async init() {
-		const result = await getConfig();
+		const result = await this.getConfig();
 		openSession();
 	}
 	async getConfig() {
