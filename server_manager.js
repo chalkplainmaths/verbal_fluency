@@ -33,10 +33,11 @@ class serverManager {
 			+ "api/v2/experiments/"
 			+ this.config_json.gitlab.projectId
 			+ "/sessions/"
-			+ this.session.token;
+			+ this.session.token
+			+ "delete";
 		const form = new FormData();
 		form.append("isCompleted", true);
-		this.sresponse = await this.queryServer(url, "DELETE", form);
+		this.sresponse = await this.queryServer(url, "POST", form);
 	}
 
 	// upload data using our session token
