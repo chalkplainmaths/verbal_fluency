@@ -32,6 +32,7 @@ class serverManager {
 	}
 
 	// close the session
+	// for some reason, data uploads are still successful even after the session has closed..?
 	async closeSession() {
 		const url = this.config.pavlovia.URL
 			+ "api/v2/experiments/"
