@@ -34,7 +34,9 @@ class serverManager {
 			+ this.config_json.gitlab.projectId
 			+ "/sessions/"
 			+ this.session.token;
-		const response = await this.queryServer(url, "DELETE", {});
+		const form = new FormData();
+		form.append("isCompleted", true);
+		const response = await this.queryServer(url, "DELETE", form);
 	}
 
 	// upload data using our session token
