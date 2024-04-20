@@ -22,7 +22,7 @@ class serverManager {
 	async openSession() {
 		const url = this.config_json.pavlovia.URL
 			+ "api/v2/experiments/"
-			+ this.config_json.pavlovia.URL
+			+ this.config_json.gitlab.projectId
 			+ "/sessions";
 		/*const response = await fetch(full_url, {
 			method: "POST",
