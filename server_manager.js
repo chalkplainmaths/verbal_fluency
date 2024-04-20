@@ -36,8 +36,7 @@ class serverManager {
 			+ this.session.token;
 		const form = new FormData();
 		form.append("isCompleted", true);
-		const response = await this.queryServer(url, "DELETE", form);
-		this.sresponse_json = await response.json();
+		this.sresponse = await this.queryServer(url, "DELETE", form);
 	}
 
 	// upload data using our session token
