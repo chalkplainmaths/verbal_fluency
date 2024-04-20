@@ -32,8 +32,9 @@ class serverManager {
 		const url = this.config_json.pavlovia.URL
 			+ "api/v2/experiments/"
 			+ this.config_json.gitlab.projectId
-			+ "/sessions/delete"
-			+ this.session.token;
+			+ "/sessions/"
+			+ this.session.token
+			+ "delete";
 		const form = new FormData();
 		form.append("isCompleted", true);
 		const response = await this.queryServer(url, "DELETE", form);
