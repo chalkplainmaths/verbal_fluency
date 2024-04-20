@@ -31,7 +31,7 @@ class serverManager {
 	async uploadData() {
 		const form = new FormData();
 		form.append("key", "data_001.csv");
-		form.append("data", "data:text/csv;charset=utf-8,thing,otherthing,\r\n");
+		form.append("value", "data:text/csv;charset=utf-8,thing,otherthing,\r\n");
 		const url = await this.config_json.pavlovia.URL;
 		const id = await this.config_json.gitlab.projectId;
 		const token = await this.session.token;
