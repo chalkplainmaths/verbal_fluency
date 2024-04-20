@@ -13,8 +13,8 @@ class serverManager {
 	}
 	async openSession() {
 		const form = {};
-		const url = await this.config_json.pavlovia.URL;
-		const id = await this.config_json.gitlab.projectId;
+		const url = this.config_json.pavlovia.URL;
+		const id = this.config_json.gitlab.projectId;
 		const full_url = url + "api/v2/experiments/" + id + "/sessions";
 		const response = await fetch(full_url, {
 			method: "POST",
