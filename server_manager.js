@@ -22,7 +22,7 @@ class serverManager {
 		return await config.json();
 	}
 
-	// open the session with pavlovia.org and store related data (e.g. the session token)
+	// open the session with pavlovia.org and return the object from pavlovia.org, which contains the session token
 	async openSession() {
 		const url = this.config.pavlovia.URL
 			+ "api/v2/experiments/"
