@@ -29,7 +29,7 @@ class serverManager {
 	async closeSession() {
 	}
 	async uploadData() {
-		const form = {"a nice key", "some lovely data"};
+		const form = {"a nice key": "some lovely data"};
 		const url = await this.config_json.pavlovia.URL;
 		const id = await this.config_json.gitlab.projectId;
 		const token = await this.session.token;
