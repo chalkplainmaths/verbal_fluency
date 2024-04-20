@@ -33,7 +33,7 @@ class serverManager {
 			+ "api/v2/experiments/"
 			+ this.config_json.gitlab.projectId
 			+ "/sessions/"
-			+ this.config_json.session.token;
+			+ this.session.token;
 		const response = await this.queryServer(url, "DELETE", {});
 	}
 
