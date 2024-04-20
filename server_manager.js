@@ -1,5 +1,5 @@
 // class to allow communication with pavlovia.org api, heavily based on ServerManager.js from PsychoJS
-// need to add an option to use beacon in event of user closing window
+// need to add an option to use navigator.beacon in event of user closing window
 
 class serverManager {
 	constructor() {
@@ -24,32 +24,16 @@ class serverManager {
 			+ "api/v2/experiments/"
 			+ this.config_json.gitlab.projectId
 			+ "/sessions";
-		/*const response = await fetch(full_url, {
-			method: "POST",
-			mode: "cors",
-			credentials: "same-origin",
-			redirect: "follow",
-			referrerPolicy: "no-referrer",
-			body: {}
-		});*/
 		this.session = await this.queryServer(url, "POST", {});
 	}
 
-	//
+	// close the session
 	async closeSession() {
 		const url = this.config_json.pavlovia.URL
 			+ "api/v2/experiments/"
 			+ this.config_json.gitlab.projectId
 			+ "/sessions/"
 			+ this.config_json.session.token;
-		/*const response = await fetch(full_url, {
-			method: "DELETE",
-			mode: "cors",
-			credentials: "same-origin",
-			redirect: "follow",
-			referrerPolicy: "no-referrer",
-			body: {}
-		});*/
 		const response = await this.queryServer(url, "DELETE", {});
 	}
 
@@ -64,19 +48,10 @@ class serverManager {
 			+ "/sessions/"
 			+ this.session.token
 			+ "/results";
-		/*const response = await fetch(full_url, {
-			method: "POST",
-			mode: "cors",
-			credentials: "same-origin",
-			redirect: "follow",
-			referrerPolicy: "no-referrer",
-			body: form
-		});*/
 		const response = await this.queryServer(url, "POST", form);
-		/*if (response.status !== 200)
-			console.warn("Data upload to server was unsuccessful.");*/
 	}
 
+	// send a query to the server
 	async queryServer(url, _method, data) {
 		const response = await fetch(url, {
 			method: _method,
