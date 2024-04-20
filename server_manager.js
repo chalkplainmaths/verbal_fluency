@@ -39,7 +39,7 @@ class serverManager {
 	async closeSession() {
 		const url = this.config_json.pavlovia.URL
 			+ "api/v2/experiments/"
-			+ this.config_json.pavlovia.URL
+			+ this.config_json.gitlab.projectId
 			+ "/sessions/"
 			+ this.config_json.session.token;
 		/*const response = await fetch(full_url, {
@@ -87,7 +87,7 @@ class serverManager {
 			body: data
 		});
 		const response_json = await response.json();
-		return response.json;
+		return response_json;
 	}
 
 	//
