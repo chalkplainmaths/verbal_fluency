@@ -3,12 +3,13 @@ class serverManager {
 		this.url_params = new URLSearchParams( window.location.search.slice(1) );
 	}
 	async init() {
-		await getConfig();
-		await openSession();
+		const result = await getConfig();
+		openSession();
 	}
 	async getConfig() {
 		const config = await fetch("config.json");
 		this.config_json = await config.json();
+		return 0;
 	}
 	async openSession() {
 		const form = {};
