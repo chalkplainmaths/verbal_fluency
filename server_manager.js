@@ -16,14 +16,14 @@ class serverManager {
 		const url = await this.config_json.pavlovia.URL;
 		const id = await this.config_json.gitlab.projectId;
 		const full_url = url + "api/v2/experiments/" + id + "/sessions";
-		this.token = await fetch(full_url, {
+		this.session_data = await fetch(full_url, {
 			method: "POST",
 			mode: "cors",
 			credentials: "same-origin",
 			redirect: "follow",
 			referrerPolicy: "no-referrer",
 			body: form
-		});
+		}).json();
 	}
 	async closeSession() {
 	}
