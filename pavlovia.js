@@ -20,7 +20,7 @@ class Pavlovia {
 		this.getConfig().then(
 			(value) => {this.config = value;}
 		).then(
-			() => {return this.openSession();}
+			() => {return this.openSession();} // I think you can just put this.openSession there, because that is a function
 		).then(
 			(value) => {this.session = value;}
 		);

@@ -67,5 +67,16 @@ function add_record() {
 	my_button.addEventListener("click", () => { is_recording = change_state(is_recording, my_indicator);} );
 }
 
-const participant_id = get_id().then( (value) => {return value;} );
-participant_id.then( () => {add_record();} );
+get_id().then(
+	(value) => {participant_id = value;} // output of this is a Promise object with undefined result, because the function has no return
+// because we have not declared participant_id, js will declare a global variable, despite it being in a function, though the function won't be exed
+// (and the var won't be declared) until after the user has entered their Participant ID
+// if this eventaully becomes a class it will be done with this. and will not be global
+).then(
+	add_record // no need for ()=>{} notation here because add_record is a function, note that add_record() would be a function call, and would return a result, rather than a function
+); // any return from add_record could be passed through to another .then() and used in a function
+//const participant_id = get_id().then( (value) => {return value;} );
+// get_id() and get_id.then( (value) => {return value;} ) are the same thing because .then() takes the output of get_id(), which is a Promise object,
+// and puts the result as input into (value) => {return value;}, the output of which is in turn added as the result of a new Promise object,
+// so it essentially does nothing, it just produces an identical Promise
+//participant_id.then( () => {add_record();} );
