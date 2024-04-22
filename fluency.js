@@ -1,11 +1,11 @@
 //const pavlovia = new Pavlovia();
 
-function create_form() {
+function create_form(message) {
 	const form = document.createElement("form");
 	form.appendChild(document.createElement("label"));
 	form.appendChild(document.createElement("input"));
 	form.appendChild(document.createElement("input"));
-	form.getElementsByTagName("label")[0].innerHTML = "Please enter your Participant ID:";
+	form.getElementsByTagName("label")[0].innerHTML = message;
 	form.getElementsByTagName("input")[1].type = "submit";
 	form.getElementsByTagName("input")[1].value = "Submit";
 	return form;
@@ -18,12 +18,12 @@ function check_numeric(string) {
 	return true;
 }
 
-function validate_form(form) {
+function validate_form(form, result_name, not_empty = true, numeric = false) {
 	const value = form.getElementsByTagName("input")[0].value;
-	if (value == "") {
-		alert("You must enter a Participant ID.");
-	} else if (!check_numeric(value)) {
-		alert("Your Participant ID should only contain numbers.");
+	if (value == "" && not_empty == true) {
+		alert("You must enter a "+result_name+".");
+	} else if (!check_numeric(value) && numeric == true) {
+		alert("Your "+result_name+" should only contain numbers.");
 		form.getElementsByTagName("input")[0].value = "";
 	} else {
 		console.log("form input: "+value);
@@ -33,20 +33,19 @@ function validate_form(form) {
 	return false;
 }
 
-function form_listener(form, end) {
+function form_listener(form, resolve) {
 	form.addEventListener("submit",
 		function(event) {
 			event.preventDefault();
-			if(validate_form(form))
-				end();
+			if(validate_form(form, "Participant ID", true, true))
+				resolve(form.getElementsByTagName("input")[0].value); // for more complex forms the arguments pass to the resolve func could be generalised
 		}
 	)
 }
 
-async function get_id() {
-	const my_form = document.body.appendChild(create_form());
-	promise = new Promise((resolve) => {form_listener(my_form, resolve);});
-	return promise.then(() => {return my_form.getElementsByTagName("input")[0].value;});
+function get_id() {
+	const my_form = document.body.appendChild(create_form("Please enter your Participant ID:"));
+	return new Promise( (resolve) => {form_listener(my_form, resolve);} );
 }
 
 function change_state(is_recording, my_indicator) {
@@ -58,15 +57,15 @@ function change_state(is_recording, my_indicator) {
 	return !is_recording;
 }
 
-async function add_record() {
+function add_record() {
 	let is_recording = false;
 	const my_indicator = document.body.appendChild(document.createElement("p"));
 	my_indicator.innerHTML = "NOT RECORDING";
 	const my_button = document.body.appendChild(document.createElement("button"));
 	my_button.type = "button";
 	my_button.innerHTML = "RECORD";
-	my_button.addEventListener("click", () => {is_recording = change_state(is_recording, my_indicator);});
+	my_button.addEventListener("click", () => { is_recording = change_state(is_recording, my_indicator);} );
 }
 
-const participant_id = get_id();
-participant_id.then(() => {add_record();});
+const participant_id = get_id().then( (value) => {return value;} );
+participant_id.then( () => {add_record();} );
