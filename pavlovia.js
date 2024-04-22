@@ -11,6 +11,20 @@ class Pavlovia {
 	async start() {
 		this.config = await this.getConfig();
 		this.session = await this.openSession();
+		/* These are all valid ways of doing it
+		// this way is ugly
+		this.config = this.getConfig().then( (value) => {return value;} );
+		this.session = this.config.then( () => { return this.openSession().then( (value) => {return value;} ) } );
+		this.bigbob = this.session.then( () => { return this.getBigBob().then( (value) => {return value;} ) } );
+		// I like this way, the promise objects are passed through
+		this.getConfig().then(
+			(value) => {this.config = value;}
+		).then(
+			() => {return this.openSession();}
+		).then(
+			(value) => {this.session = value;}
+		);
+		*/
 	}
 
 	// end, maybe the start() and end() methods are unnecessary, could take out in future
