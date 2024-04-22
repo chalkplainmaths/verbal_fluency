@@ -1,5 +1,7 @@
 // class to allow communication with pavlovia.org api, heavily based on ServerManager.js from PsychoJS
 // need to add an option to use navigator.beacon in event of user closing window
+// I'm not sure all of these need to be async / await , once a promise is introduced, other things will automatically wait for it to be fullfilled before doing anything
+// THOUGH, I think here it may be a substitute for .then() syntax, maybe switch it for uniformity
 
 class Pavlovia {
 	constructor() {
