@@ -1,1 +1,1 @@
- const server = new Server;
+const pavlovia = new Pavlovia();

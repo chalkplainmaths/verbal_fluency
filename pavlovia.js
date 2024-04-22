@@ -1,7 +1,7 @@
 // class to allow communication with pavlovia.org api, heavily based on ServerManager.js from PsychoJS
 // need to add an option to use navigator.beacon in event of user closing window
 
-class Server {
+class Pavlovia {
 	constructor() {
 	}
 
