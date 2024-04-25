@@ -108,7 +108,7 @@ get_submission("Participant ID", true, true)
 	link.href = URL.createObjectURL(data.blob);
 })
 .then( () => {return pavlovia.start();} )
-.then( () => {return pavlovia.uploadData(participant_id, participant_id;)} )
+.then( () => {return pavlovia.uploadData(participant_id, participant_id);} )
 .then( (value) => {console.log(value);} )
 .then( () => {return pavlovia.end();} );
 /*.then( (data) => {the_data = data; return pavlovia.start();} )
