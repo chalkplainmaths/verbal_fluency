@@ -100,13 +100,17 @@ let participant_id;
 let the_data;
 get_submission("Participant ID", true, true)
 .then( (value) => {participant_id = value; return wait_button("RECORD");} )
-.then( () => {return record_audio(3000);} )
+.then( () => {return record_audio(10000);} )
 .then( (data) => {
 	const link = document.body.appendChild(document.createElement("a"));
 	link.innerHTML = "download";
 	link.download = "audio."+data.type.split("/")[1];
 	link.href = URL.createObjectURL(data.blob);
-});
+})
+.then( () => {return pavlovia.start();} )
+.then( () => {return pavlovia.uploadData(participant_id, participant_id;)} )
+.then( (value) => {console.log(value);} )
+.then( () => {return pavlovia.end();} );
 /*.then( (data) => {the_data = data; return pavlovia.start();} )
 .then( () => {return pavlovia.uploadMedia("audio."+the_data.type.split("/")[1], the_data.blob);} )
 .then( (data) => {console.log(data); return pavlovia.end();} );*/
