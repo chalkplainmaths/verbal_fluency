@@ -107,8 +107,8 @@ get_submission("Participant ID", true, true)
 	link.download = "audio."+data.type.split("/")[1];
 	link.href = URL.createObjectURL(data.blob);
 })*/
-.then( (data) => {return {data, pavlovia.start()};} )
-.then( (data) => {return pavlovia.uploadMedia(data.blob);} )
+.then( (data) => {return {data: data, promise: pavlovia.start()};} )
+.then( (data) => {return pavlovia.uploadMedia(data.data.blob);} )
 .then( () => {return pavlovia.end();} );
 /*.then( (data) => {the_data = data; return pavlovia.start()} )
 .then( (data) => {return the_data.blob.text();})
