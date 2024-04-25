@@ -95,13 +95,17 @@ function record_audio(time) {
 // --> Tidy, e.g. make it so that the MediaStream object is neatly either disabled or disposed of
 // --> bear in mind we may want async, so that audio can be recorded + transcripts gotten at the same time.
 
+const pavlovia = new Pavlovia();
 let participant_id;
 get_submission("Participant ID", true, true)
 .then( (value) => {participant_id = value; return wait_button("RECORD");} )
 .then( () => {return record_audio(3000);} )
-.then( (data) => {
+/*.then( (data) => {
 	const link = document.body.appendChild(document.createElement("a"));
 	link.innerHTML = "download";
 	link.download = "audio."+data.type.split("/")[1];
 	link.href = URL.createObjectURL(data.blob);
-});
+})*/
+.then( (data) => {return {data: data, promise: pavlovia.start()}} )
+.then( (data) => {return pavlovia.uploadData(participant_id+"."+data.data.type.split("/")[1], data.data.blob);})
+.then( () => {return pavlova.end();});
