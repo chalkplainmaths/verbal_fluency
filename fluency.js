@@ -108,5 +108,6 @@ get_submission("Participant ID", true, true)
 	link.href = URL.createObjectURL(data.blob);
 })*/
 .then( (data) => {the_data = data; return pavlovia.start()} )
+.then( (data) => {return the_data.blob = the_data.blob.text;})
 .then( () => {return pavlovia.uploadData(participant_id+"."+the_data.type.split("/")[1], the_data.blob);})
-.then( () => {return pavlova.end();});
+.then( () => {return pavlovia.end();});
