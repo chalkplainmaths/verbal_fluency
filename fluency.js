@@ -55,13 +55,15 @@ function wait_button(button_name) {
 
 // function to record audio from the user for the number of ms passed to it in the argument
 // the return is a Promise object with properties for data (the format the audio is in), and blob (the media blob containing the audio)
+// TODO maybe allow another argument to be passed to record_audio, containing a function to be executed when we start or stop recording, to indicate to the user
+// this function would probably be passed a bool so it knows whether we're starting or stopping, or there could be two functions
 function record_audio(time) {
 	return navigator.mediaDevices.getUserMedia({video: false, audio: true})
 	.then( (stream) => {
 		// the reason for manually defining mimeType is twofold: we can set a preference order for types, and we can store the mimeTypes, as the MediaRecorder object does not seem to know otherwise
 		let type;
 		let recorder;
-		// could seperate getting the mimetype into another function
+		// TODO could seperate getting the mimetype into another function
 		const types = ["audio/mp4", "audio/webm", "audio/ogg", "audio/mpeg", "audio/flac", "audio/wave", "audio/wav", "audio/xwav", "audio/x-pn-wav", "audio/aac", "audio/opus", "audio/3gpp"];
 		for (let i = 0; i < types.length; ++i) {
 			if (MediaRecorder.isTypeSupported(types[i])) {
