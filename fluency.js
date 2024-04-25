@@ -97,6 +97,7 @@ function record_audio(time) {
 
 const pavlovia = new Pavlovia();
 let participant_id;
+let the_data;
 get_submission("Participant ID", true, true)
 .then( (value) => {participant_id = value; return wait_button("RECORD");} )
 .then( () => {return record_audio(3000);} )
@@ -106,6 +107,6 @@ get_submission("Participant ID", true, true)
 	link.download = "audio."+data.type.split("/")[1];
 	link.href = URL.createObjectURL(data.blob);
 })*/
-.then( (data) => {return {data: data, promise: pavlovia.start()}} )
-.then( (data) => {return pavlovia.uploadData(participant_id+"."+data.data.type.split("/")[1], data.data.blob);})
+.then( (data) => {the_data = data; return pavlovia.start()} )
+.then( () => {return pavlovia.uploadData(participant_id+"."+the_data.type.split("/")[1], the_data.blob);})
 .then( () => {return pavlova.end();});
