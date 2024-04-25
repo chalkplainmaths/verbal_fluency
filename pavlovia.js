@@ -2,6 +2,7 @@
 // need to add an option to use navigator.beacon in event of user closing window
 // I'm not sure all of these need to be async / await , once a promise is introduced, other things will automatically wait for it to be fullfilled before doing anything
 // THOUGH, I think here it may be a substitute for .then() syntax, maybe switch it for uniformity
+// add exception catches
 
 class Pavlovia {
 	constructor() {
@@ -20,7 +21,8 @@ class Pavlovia {
 		this.getConfig().then(
 			(value) => {this.config = value;}
 		).then(
-			() => {return this.openSession();} // I think you can just put this.openSession there, because that is a function
+			//() => {return this.openSession();} // I think you can just put this.openSession there, because that is a function
+			this.openSession
 		).then(
 			(value) => {this.session = value;}
 		);
