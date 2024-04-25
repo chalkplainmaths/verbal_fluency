@@ -101,15 +101,15 @@ let the_data;
 get_submission("Participant ID", true, true)
 .then( (value) => {participant_id = value; return wait_button("RECORD");} )
 .then( () => {return record_audio(3000);} )
-/*.then( (data) => {
+.then( (data) => {
 	const link = document.body.appendChild(document.createElement("a"));
 	link.innerHTML = "download";
 	link.download = "audio."+data.type.split("/")[1];
 	link.href = URL.createObjectURL(data.blob);
-})*/
-.then( (data) => {the_data = data; return pavlovia.start();} )
+});
+/*.then( (data) => {the_data = data; return pavlovia.start();} )
 .then( () => {return pavlovia.uploadMedia("audio."+the_data.type.split("/")[1], the_data.blob);} )
-.then( (data) => {console.log(data); return pavlovia.end();} );
+.then( (data) => {console.log(data); return pavlovia.end();} );*/
 /*.then( (data) => {the_data = data; return pavlovia.start()} )
 .then( (data) => {return the_data.blob.text();})
 .then( (value) => {return pavlovia.uploadData(participant_id+"."+the_data.type.split("/")[1], value);} )
