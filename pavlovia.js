@@ -94,6 +94,7 @@ class Pavlovia {
 		const response = await fetch(url, {
 			method: _method,
 			mode: "cors",
+			cache: "no-cache",
 			credentials: "same-origin",
 			redirect: "follow",
 			referrerPolicy: "no-referrer",
