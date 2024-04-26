@@ -82,6 +82,7 @@ class Pavlovia {
 	}
 
 	async uploadMedia(filename, blob) {
+		// TODO need to add a wait for upload (using check upload status) because otherwise user may exit before its finished uploading!
 		console.log("started uploadMedia");
 		const form = new FormData();
 		form.append("media", blob, filename);
