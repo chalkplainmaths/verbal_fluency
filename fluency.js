@@ -108,8 +108,8 @@ get_submission("Participant ID", true, true)
 .then( (value) => {participant_id = value; console.log(participant_id); return wait_button("RECORD");} )
 .then( () => {return record_audio(5000);} )
 //.then( (data) => {return new Promise( (resolve) => {resolve({data: data,pavlovia: pavlovia.start()});} );} )
-.then( (data) => {pavlovia.start(); return data;} )
-.then( (data) => {pavlovia.uploadMedia(participant_id+"."+data.type.split("/")[1], data.blob);} );
+.then( (data) => {return {data: data, promise: pavlovia.start()};} )
+.then( (data) => {pavlovia.uploadMedia(participant_id+"."+data.data.type.split("/")[1], data.data.blob);} );
 /*.then( (data) => {
 	const link = document.body.appendChild(document.createElement("a"));
 	link.innerHTML = "download";
