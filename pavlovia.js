@@ -85,7 +85,7 @@ class Pavlovia {
 		console.log("started uploadMedia");
 		const form = new FormData();
 		form.append("media", blob, filename);
-		console.log(form)
+		console.log(form);
 		const url = this.config.pavlovia.URL
 			+ "api/v2/experiments/"
 			+ this.config.gitlab.projectId
