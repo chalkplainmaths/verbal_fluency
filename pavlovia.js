@@ -12,6 +12,9 @@ class Pavlovia {
 	async start() {
 		this.config = await this.getConfig();
 		this.session = await this.openSession();
+		console.log("starting");
+		console.log(this.config);
+		console.log(this.session);
 		/* These are all valid ways of doing it
 		// this way is ugly
 		this.config = this.getConfig().then( (value) => {return value;} );
