@@ -92,7 +92,6 @@ class Pavlovia {
 			+ "/sessions/"
 			+ this.session.token
 			+ "/media";
-		//return await this.queryServer(url, "POST", form);
 		return await this.queryServer(url, "POST", form);
 	}
 
