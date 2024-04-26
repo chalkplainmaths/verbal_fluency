@@ -107,7 +107,8 @@ let the_data;
 get_submission("Participant ID", true, true)
 .then( (value) => {participant_id = value; console.log(participant_id); return wait_button("RECORD");} )
 .then( () => {return record_audio(10000);} )
-.then( (data) => {return new Promise( (resolve) => {resolve({data: data,pavlovia: pavlovia.start()});} );} )
+//.then( (data) => {return new Promise( (resolve) => {resolve({data: data,pavlovia: pavlovia.start()});} );} )
+.then( () => {return pavlovia.start();} )
 .then( (data) => {console.log(data);} );
 /*.then( (data) => {
 	const link = document.body.appendChild(document.createElement("a"));
