@@ -68,6 +68,7 @@ class Pavlovia {
 
 	// upload data using our session token
 	async uploadData(filename = "serverManager.uploadData_default_name.csv", filecontents = "serverManager.uploadData,default,data") {
+		console.log("started uploadData");
 		const form = new FormData();
 		form.append("key", filename);
 		form.append("value", filecontents);
