@@ -93,9 +93,9 @@ class Pavlovia {
 			+ this.session.token
 			+ "/media";
 		//return await this.queryServer(url, "POST", form);
-		const response = await this.queryServer(url, "POST", form);
-		console.log(response);
-		return response;
+		response = await this.queryServer(url, "POST", form);
+		response.then( (value) => {console.log(value);} )
+		return 0;
 	}
 
 	// send a query to the server
