@@ -83,13 +83,17 @@ class Pavlovia {
 	async uploadMedia(filename, blob) {
 		const form = new FormData();
 		form.append("media", blob, filename);
+		console.log(form)
 		const url = this.config.pavlovia.URL
 			+ "api/v2/experiments/"
 			+ this.config.gitlab.projectId
 			+ "/sessions/"
 			+ this.session.token
 			+ "/media";
-		return await this.queryServer(url, "POST", form);
+		//return await this.queryServer(url, "POST", form);
+		const response = await this.queryServer(url, "POST", form);
+		console.log(response);
+		return response;
 	}
 
 	// send a query to the server
@@ -104,7 +108,7 @@ class Pavlovia {
 			body: data
 		});
 		const response_json = await response.json();
-		console.log(response_json);
+		//console.log(response_json);
 		return response_json;
 	}
 
