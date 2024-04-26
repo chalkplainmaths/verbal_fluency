@@ -81,6 +81,7 @@ class Pavlovia {
 	}
 
 	async uploadMedia(filename, blob) {
+		console.log("started uploadMedia");
 		const form = new FormData();
 		form.append("media", blob, filename);
 		console.log(form)
