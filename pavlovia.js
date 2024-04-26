@@ -114,7 +114,4 @@ class Pavlovia {
 		return response_json;
 	}
 
-	//
-	async uploadMedia() {
-	}
 }
