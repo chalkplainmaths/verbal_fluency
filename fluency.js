@@ -107,12 +107,14 @@ let the_data;
 get_submission("Participant ID", true, true)
 .then( (value) => {participant_id = value; console.log(participant_id); return wait_button("RECORD");} )
 .then( () => {return record_audio(10000);} )
-.then( (data) => {
+.then( (data) => {return new Promise( (resolve) => {resolve({data: data,pavlovia: pavlovia.start()});} );} )
+.then( (data) => {console.log(data);} );
+/*.then( (data) => {
 	const link = document.body.appendChild(document.createElement("a"));
 	link.innerHTML = "download";
 	link.download = "audio."+data.type.split("/")[1];
 	link.href = URL.createObjectURL(data.blob);
-});
+});*/
 /*.then( () => {return pavlovia.start();} )
 .then( () => {return pavlovia.uploadData(participant_id, participant_id);} )
 .then( (value) => {console.log(value);} )
