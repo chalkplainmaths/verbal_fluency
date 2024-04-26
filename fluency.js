@@ -110,7 +110,7 @@ get_submission("Participant ID", true, true)
 //.then( (data) => {return new Promise( (resolve) => {resolve({data: data,pavlovia: pavlovia.start()});} );} )
 .then( (data) => {return the_data = data;} )
 .then( () => {return pavlovia.start();} )
-.then( () => {pavlovia.uploadMedia(participant_id+"."+the_data.data.type.split("/")[1], the_data.data.blob);} );
+.then( () => {pavlovia.uploadMedia(participant_id+"."+the_data.type.split("/")[1], the_data.blob);} );
 /*.then( (data) => {
 	const link = document.body.appendChild(document.createElement("a"));
 	link.innerHTML = "download";
