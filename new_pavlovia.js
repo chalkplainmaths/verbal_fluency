@@ -14,9 +14,9 @@ class Pavlovia {
                 + "api/v2/experiments/"
                 + this.config.gitlab.projectId
                 + "/sessions";
-            return fetch(this.url, "POST", {});
+            return this._query_server(this.url, "POST", {});
         }).then( (value) => {
-            this.session = value.json();
+            this.session = value;
             this.url += this.session.token + "/";
         });
     }
@@ -45,7 +45,7 @@ class Pavlovia {
         return this._query_server(this.url + "results", "POST", form);
     }
 
-    upload_media(filename = "default_filename_from_Pavlovia.upload_data()") {
+    upload_media(filename = "default_filename_from_Pavlovia.upload_media()") {
 
     }
 
