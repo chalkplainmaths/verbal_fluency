@@ -58,25 +58,6 @@ class Pavlovia {
                 const interval = setInterval( () => {
                     this._query_server(status_url, "POST")
                     .then( (status) => {
-                        // LOOK MORE INTO SETINTERVAL TO SEE IF interval!=null IS NECESSARY
-                        if (status.status === "COMPLETED" && interval != null) {
-                            clearInterval(interval);
-                            resolve();
-                        }
-                    });
-                }, 500);
-            });
-        });
-        /*return new Promise( (resolve) => {
-            this._query_server(this.url + "media", "POST", form)
-            .then( (response) => {
-                const status_url = this.url
-                    + "media/"
-                    + response.uploadToken
-                    + "/status";
-                const interval = setInterval( () => {
-                    this._query_server(status_url, "POST")
-                    .then( (status) => {
                         if (status.status === "COMPLETED") {
                             clearInterval(interval);
                             resolve();
@@ -84,7 +65,7 @@ class Pavlovia {
                     });
                 }, 500);
             });
-        });*/
+        });
     }
 
     _query_server(url, method, data = new FormData) {
