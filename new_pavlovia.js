@@ -32,11 +32,11 @@ class Pavlovia {
 
     _open_session() {
 
-    }*/
+    }
 
     _close_session() {
 
-    }
+    }*/
 
     upload_data(filename = "default_filename_from_Pavlovia.upload_data()", filecontents = "default_filecontents_from_Pavlovia.upload_data()") {
         const form = new FormData();
@@ -45,11 +45,48 @@ class Pavlovia {
         return this._query_server(this.url + "results", "POST", form);
     }
 
-    upload_media(filename = "default_filename_from_Pavlovia.upload_media()") {
-
+    upload_media(filename = "default_filename_from_Pavlovia.upload_media()", blob = new Blob()) {
+        const form = new FormData();
+        form.append("media", blob, filename);
+        return this._query_server(this.url, + "media", "POST", form)
+        .then( (response) => {
+            return new Promise( (resolve) => {
+                const status_url = this.url
+                    + "media/"
+                    + response.uploadToken
+                    + "/status";
+                const interval = setInterval( () => {
+                    this._query_server(status_url, "POST")
+                    .then( (status) => {
+                        if (status.status === "COMPLETED") {
+                            clearInterval(interval);
+                            resolve();
+                        }
+                    });
+                }, 500);
+            });
+        });
+        /*return new Promise( (resolve) => {
+            this._query_server(this.url + "media", "POST", form)
+            .then( (response) => {
+                const status_url = this.url
+                    + "media/"
+                    + response.uploadToken
+                    + "/status";
+                const interval = setInterval( () => {
+                    this._query_server(status_url, "POST")
+                    .then( (status) => {
+                        if (status.status === "COMPLETED") {
+                            clearInterval(interval);
+                            resolve();
+                        }
+                    });
+                }, 500);
+            });
+        });*/
     }
 
-    _query_server(url, method, data) {
+    _query_server(url, method, data = new FormData) {
         return fetch(url, {
             method: method,
             mode: "cors",
