@@ -110,7 +110,15 @@ get_submission("Participant ID", true, true)
 //.then( (data) => {return new Promise( (resolve) => {resolve({data: data,pavlovia: pavlovia.start()});} );} )
 .then( (data) => {return the_data = data;} )
 .then( () => {return pavlovia.start();} )
-.then( () => {pavlovia.uploadMedia(participant_id+"."+the_data.type.split("/")[1], the_data.blob);} )
+.then( () => {
+	uploading = document.body.appendChild(document.createElement("p"));
+	uploading.innerHTML = "UPLOADING";
+	return [uploading, pavlovia.uploadMedia(participant_id+"."+the_data.type.split("/")[1], the_data.blob)];
+})
+.then( (value) => {
+	document.body.removeChild(value[0]);
+	return pavlovia.end();
+})
 .then( () => {
 	const link = document.body.appendChild(document.createElement("a"));
 	link.innerHTML = "local download";
