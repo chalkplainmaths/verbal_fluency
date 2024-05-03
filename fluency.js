@@ -110,13 +110,13 @@ get_submission("Participant ID", true, true)
 //.then( (data) => {return new Promise( (resolve) => {resolve({data: data,pavlovia: pavlovia.start()});} );} )
 .then( (data) => {return the_data = data;} )
 .then( () => {return pavlovia.start();} )
-.then( () => {pavlovia.uploadMedia(participant_id+"."+the_data.type.split("/")[1], the_data.blob);} );
-/*.then( (data) => {
+.then( () => {pavlovia.uploadMedia(participant_id+"."+the_data.type.split("/")[1], the_data.blob);} )
+.then( () => {
 	const link = document.body.appendChild(document.createElement("a"));
-	link.innerHTML = "download";
-	link.download = "audio."+data.type.split("/")[1];
-	link.href = URL.createObjectURL(data.blob);
-});*/
+	link.innerHTML = "local download";
+	link.download = "audio."+the_data.type.split("/")[1];
+	link.href = URL.createObjectURL(the_data.blob);
+});
 /*.then( () => {return pavlovia.start();} )
 .then( () => {return pavlovia.uploadData(participant_id, participant_id);} )
 .then( (value) => {console.log(value);} )
