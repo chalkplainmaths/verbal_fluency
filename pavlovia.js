@@ -12,7 +12,7 @@ class Pavlovia {
         .then( (value) => {
             //this.config = value.json();
             this.config = value;
-            this.url = this.config.pavlovia.url
+            this.url = this.config.pavlovia.URL
                 + "api/v2/experiments/"
                 + this.config.gitlab.projectId
                 + "/sessions";
