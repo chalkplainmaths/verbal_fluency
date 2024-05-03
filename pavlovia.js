@@ -50,7 +50,7 @@ class Pavlovia {
     upload_media(filename = "default_filename_from_Pavlovia.upload_media()", blob = new Blob()) {
         const form = new FormData();
         form.append("media", blob, filename);
-        return this._query_server(this.url, + "media", "POST", form)
+        return this._query_server(this.url + "media", "POST", form)
         .then( (response) => {
             const status_url = this.url
                 + "media/"
