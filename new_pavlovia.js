@@ -58,7 +58,8 @@ class Pavlovia {
                 const interval = setInterval( () => {
                     this._query_server(status_url, "POST")
                     .then( (status) => {
-                        if (status.status === "COMPLETED") {
+                        // LOOK MORE INTO SETINTERVAL TO SEE IF interval!=null IS NECESSARY
+                        if (status.status === "COMPLETED" && interval != null) {
                             clearInterval(interval);
                             resolve();
                         }
