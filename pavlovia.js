@@ -71,14 +71,17 @@ class Pavlovia {
     }
 
     _query_server(url, method, data = new FormData) {
-        return fetch(url, {
+        request = {
             method: method,
             mode: "cors",
             cache: "no-cache",
             credentials: "same-origin",
             redirect: "follow",
             referrerPolicy: "no-referrer",
-            body: data
-        }).then ( (value) => {return value.json();} );
+        }
+        if (method == "POST")
+            request.body = data;
+        return fetch(url, request)
+        .then ( (value) => {return value.json();} );
     }
 }
