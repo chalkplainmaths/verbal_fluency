@@ -4,7 +4,7 @@
 // THOUGH, I think here it may be a substitute for .then() syntax, maybe switch it for uniformity
 // add exception catches
 
-class Pavlovia {
+class oldPavlovia {
 	constructor() {
 	}
 
