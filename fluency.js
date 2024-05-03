@@ -113,7 +113,7 @@ get_submission("Participant ID", true, true)
 .then( () => {
 	uploading = document.body.appendChild(document.createElement("p"));
 	uploading.innerHTML = "UPLOADING";
-	return [uploading, pavlovia.uploadMedia(participant_id+"."+the_data.type.split("/")[1], the_data.blob)];
+	return [uploading, pavlovia.upload_media(participant_id+"."+the_data.type.split("/")[1], the_data.blob)];
 })
 .then( (value) => {
 	document.body.removeChild(value[0]);
