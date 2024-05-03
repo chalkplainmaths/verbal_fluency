@@ -16,7 +16,7 @@ class Pavlovia {
                 + "api/v2/experiments/"
                 + this.config.gitlab.projectId
                 + "/sessions/";
-            return this._query_server(this.url, "POST", {});
+            return this._query_server(this.url, "POST");
         }).then( (value) => {
             this.session = value;
             this.url += this.session.token + "/";
