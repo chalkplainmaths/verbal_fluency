@@ -71,7 +71,7 @@ class Pavlovia {
     }
 
     _query_server(url, method, data = new FormData) {
-        request = {
+        const request = {
             method: method,
             mode: "cors",
             cache: "no-cache",
