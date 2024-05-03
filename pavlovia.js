@@ -58,7 +58,7 @@ class Pavlovia {
                 + "/status";
             return new Promise( (resolve) => {
                 const interval = setInterval( () => {
-                    this._query_server(status_url, "POST")
+                    this._query_server(status_url, "GET")
                     .then( (status) => {
                         if (status.status === "COMPLETED") {
                             clearInterval(interval);
