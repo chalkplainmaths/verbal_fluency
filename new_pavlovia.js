@@ -50,11 +50,11 @@ class Pavlovia {
         form.append("media", blob, filename);
         return this._query_server(this.url, + "media", "POST", form)
         .then( (response) => {
+            const status_url = this.url
+                + "media/"
+                + response.uploadToken
+                + "/status";
             return new Promise( (resolve) => {
-                const status_url = this.url
-                    + "media/"
-                    + response.uploadToken
-                    + "/status";
                 const interval = setInterval( () => {
                     this._query_server(status_url, "POST")
                     .then( (status) => {
