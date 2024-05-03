@@ -8,8 +8,10 @@ class Pavlovia {
     // with error handling though?
     start() {
         return fetch("config.json")
+        .then( (value) => {return value.json();})
         .then( (value) => {
-            this.config = value.json();
+            //this.config = value.json();
+            this.config = value;
             this.url = this.config.pavlovia.url
                 + "api/v2/experiments/"
                 + this.config.gitlab.projectId
