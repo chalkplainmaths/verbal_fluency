@@ -24,21 +24,10 @@ class Pavlovia {
     }
 
     end() {
-        
+        const form = new FormData;
+        form.append("isCompleted", true);
+        return this._query_server(this.url, "DELETE", form);
     }
-
-    /*_get_config() {
-        return fetch("config.json")
-        .then( (value) => {return value.json();} );
-    }
-
-    _open_session() {
-
-    }
-
-    _close_session() {
-
-    }*/
 
     upload_data(filename = "default_filename_from_Pavlovia.upload_data()", filecontents = "default_filecontents_from_Pavlovia.upload_data()") {
         const form = new FormData();
@@ -79,7 +68,7 @@ class Pavlovia {
             redirect: "follow",
             referrerPolicy: "no-referrer",
         }
-        if (method == "POST")
+        if (method == "POST" || method == "DELETE")
             request.body = data;
         return fetch(url, request)
         .then ( (value) => {return value.json();} );
