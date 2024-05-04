@@ -116,7 +116,6 @@ get_submission("Participant ID", true, true)
 	return [uploading, pavlovia.upload_media(participant_id+"."+the_data.type.split("/")[1], the_data.blob)];
 })
 .then( (value) => {
-	setTimeout( () => {document.body.removeChild(value[0]);}, 3000);
 	return pavlovia.end();
 })
 .then( () => {
