@@ -19,7 +19,7 @@ class Pavlovia {
             return this._query_server(this.url, "POST");
         }).then( (value) => {
             this.session = value;
-            this.url += "/" + this.session.token + "/";
+            this.url += "/" + this.session.token;
         });
     }
 
@@ -33,16 +33,16 @@ class Pavlovia {
         const form = new FormData();
         form.append("key", filename);
         form.append("value", filecontents);
-        return this._query_server(this.url + "results", "POST", form);
+        return this._query_server(this.url + "/results", "POST", form);
     }
 
     upload_media(filename = "default_filename_from_Pavlovia.upload_media()", blob = new Blob()) {
         const form = new FormData();
         form.append("media", blob, filename);
-        return this._query_server(this.url + "media", "POST", form)
+        return this._query_server(this.url + "/media", "POST", form)
         .then( (response) => {
             const status_url = this.url
-                + "media/"
+                + "/media/"
                 + response.uploadToken
                 + "/status";
             return new Promise( (resolve) => {
