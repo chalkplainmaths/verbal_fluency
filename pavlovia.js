@@ -71,6 +71,6 @@ class Pavlovia {
         if (method == "POST" || method == "DELETE")
             request.body = data;
         return fetch(url, request)
-        .then ( (value) => {return value.json();} );
+        .then ( (value) => {console.log(value); return value.json();} );
     }
 }
