@@ -51,7 +51,7 @@ class Pavlovia {
                     .then( (status) => {
                         if (status.status === "COMPLETED") {
                             clearInterval(interval);
-                            resolve();
+                            resolve({response: response, final_status: status});
                         }
                     });
                 }, 500);
