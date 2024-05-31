@@ -7,8 +7,62 @@
 	<link rel="stylesheet" href="./index.css">
 </head>
 <body>
+	<script src="./mylib.js"></script>
 	<script src="./pavlovia.js"></script>
-	<script src="./old_pavlovia.js"></script>
+	<!--<script src="./old_pavlovia.js"></script>-->
 	<script src="./fluency.js"></script>
+	<script>
+const fluency = new Fluency();
+fluency.init();
+
+let participant_id;
+let pavlovia = new Pavlovia();
+
+get_submission("Participant ID", true, true)
+.then( (data) => {participant_id = data; return wait_button("RECORD")} )
+.then( () => {return new Promise( (resolve) => {
+	let done = false;
+	fluency.record_audio(20000)
+	.then( () => {
+		if (done == true)
+			resolve();
+		else
+			done = true;
+	});
+	fluency.record_speech(20000)
+    .then( () => {
+        if (done == true)
+            resolve();
+        else
+            done = true;
+    });
+})})
+// comment / uncomment to enable or disable pavlovia server comms
+.then( () => {return pavlovia.start();} )
+.then( () => {
+    uploading = document.body.appendChild(document.createElement("p"));
+    uploading.innerHTML = "UPLOADING";
+	let mystring = "";
+	for (let i = 0; i < fluency.transcript.length; ++i) {
+        mystring += fluency.transcript[i].word + " ";
+    }
+    return [uploading, pavlovia.upload_media(participant_id+"."+the_data.type.split("/")[1], pavlovia.upload_data(participant_id, mystring))];
+})
+.then( (value) => {
+    document.body.removeChild(value[0]);
+    return pavlovia.end();
+})
+.then( () => {
+	const text = document.body.appendChild(document.createElement("p"));
+	for (let i = 0; i < fluency.transcript.length; ++i) {
+		text.innerHTML += fluency.transcript[i].word + " ";
+	}
+	//text.innerHTML = fluency.transcript;
+	const link = document.body.appendChild(document.createElement("a"));
+    link.innerHTML = "local download";
+    link.download = "audio." + fluency.audio.type.split("/")[1];
+    link.href = URL.createObjectURL(fluency.audio.blob);
+});
+	</script>
 </body>
 </html>

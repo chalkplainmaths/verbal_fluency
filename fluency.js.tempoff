@@ -91,7 +91,7 @@ _handle_result(event) {
 	}
 }
 
-record_speech(time) {
+get_speech() {
 	return new Promise( (resolve) => {
 		this.recognition.addEventListener("result", (event) => {this._handle_result(event);});
 		this.recognition.start();
@@ -103,53 +103,8 @@ record_speech(time) {
 				this.transcript.push(this.interim_transcript[i]);
 			}
 			resolve();
-		}, time );
+		}, 20000 );
 	});
-}
-
-// function to record audio from the user for the number of ms passed to it in the argument
-// the return is a Promise object with properties for data (the format the audio is in), and blob (the media blob containing the audio)
-// TODO maybe allow another argument to be passed to record_audio, containing a function to be executed when we start or stop recording, to indicate to the user
-// this function would probably be passed a bool so it knows whether we're starting or stopping, or there could be two functions
-record_audio(time) {
-    let stream;
-    return navigator.mediaDevices.getUserMedia({video: false, audio: true})
-    .then( (data) => {return stream = data;})
-    .then( () => {
-        //console.log("speech start");
-        //console.log(speech_start = new Event("").timeStamp);
-        // the reason for manually defining mimeType is twofold: we can set a preference order for types, and we can store the mimeTypes, as the MediaRecorder object does not seem to know otherwise
-        let type;
-        let recorder;
-        // TODO could seperate getting the mimetype into another function
-        const types = ["audio/mp4", "audio/webm", "audio/ogg", "audio/mpeg", "audio/flac", "audio/wave", "audio/wav", "audio/xwav", "audio/x-pn-wav", "audio/aac", "audio/opus", "audio/3gpp"];
-        for (let i = 0; i < types.length; ++i) {
-            if (MediaRecorder.isTypeSupported(types[i])) {
-                type = types[i];
-                recorder = new MediaRecorder(stream, {mimeType: type});
-                break;
-            } else if (i == types.length - 1) {
-                type = "audio/unknown";
-                recorder = new MediaRecorder(stream);
-            }
-        }
-        //console.log("Recording started. Start time recorded now at:");
-        //console.log("\t" + (start_time = new Event("").timeStamp));
-        return new Promise( (resolve) => {
-            let data = [];
-            // for now, dataavailable is only fired on recorder.stop(), but this may change in future if we wish to process the data during recording
-            recorder.addEventListener("dataavailable", (event) => {
-                data.push(event.data);
-            });
-            recorder.addEventListener("stop", (event) => {
-                stream.getTracks()[0].stop();
-				this.audio = {blob: new Blob(data), type: type};
-                resolve({blob: new Blob(data), type: type});
-            });
-            recorder.start();
-            setTimeout( () => {recorder.stop();}, time );
-        });
-    });
 }
 
 }
