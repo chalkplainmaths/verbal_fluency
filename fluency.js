@@ -1,7 +1,7 @@
 /*
 
-TODO PROBLEMS WITH THIS PROGRAM RIGHT NOW:
--- only defined behaviour for interim words getting new words added
+TODO _handle_result needs to sort through and get timestamps for words, continue with this
+
 */
 
 class Fluency {
@@ -20,136 +20,285 @@ init() {
 	this.recognition.continuous = false;
 	this.recognition.lang = "en-GB";
 	this.transcript = [];
-	this.interim_transcript = [];
-	this.start_time
+	this.interim_results = [];
+	this.audio_data = [];
+	this.start_time;
+	this.mime_types = ["audio/webm", "audio/mp4", "audio/ogg", "audio/mpeg", "audio/flac", "audio/wave", "audio/wav", "audio/xwav", "audio/x-pn-wav", "audio/aac", "audio/opus", "audio/3gpp"];
+	this.event_log = [];
 }
 
-_word_condition(word) {
-	if (word[0] == "p")
+get_mime_type() {
+    for (let i = 0; i < this.mime_types.length; ++i) {
+        if (MediaRecorder.isTypeSupported(this.mime_types[i]))
+            return this.mime_types[i];
+    }
+    return "audio/unknown";
+}
+
+start_audio() {
+	return navigator.mediaDevices.getUserMedia({video: false, audio: true})
+	.then( (value) => {
+		this.stream = value;
+		this.mime_type = this.get_mime_type();
+		if (this.mime_type != "audio/unknown")
+			this.recorder = new MediaRecorder(this.stream, {mimeType: this.mime_type});
+		else
+			this.recorder = new MediaRecorder(this.stream);
+		this.recorder.addEventListener( "dataavailable", (event) => {
+			this.audio_data.push(event.data);
+		});
+		this.recorder.start();
+		console.log("audio recording started");
+		return;
+	});
+}
+
+stop_audio() {
+	return new Promise( (resolve) => {
+		this.recorder.addEventListener( "stop", (event) => {
+			this.stream.getTracks()[0].stop();
+			this.audio_blob = new Blob(this.audio_data);
+			resolve();
+		}, {once: true});
+		this.recorder.stop();
+	});
+}
+
+word_condition(word) {
+	if (word[0] == "P")
 		return true;
 	return false;
 }
 
-/*_choose_result(results) {
-	let potential_actions = [];
-	for (let i = 0; i < results.length; ++i) {
-		if (results[i].length > this.interim_transcript.length) {
-			let words = [];
-			let condition = true;
-			for (let i = 1; i < results[i].length - this.interim_transcript.length + 1; ++i) {
-				words.push(index(results[i], -1 * i));
-				if (!_word_condition(index(results[i])))
-					
+handle_result(event, force_final = false) {
+
+	//this.event_log.push(JSON.stringify(event.results[0]));
+
+	console.log(event);
+	this.prev_event = event;
+
+	if (event.results[0].isFinal || force_final) {
+
+		console.log("FINAL RESULT EVENT:", event);
+
+		// select the final result we will use
+		// prioritises number of satisfactory words in the first case, then confidence
+		let result = {num: 0, confidence: 0, arr: []}; // num is the number of words that meet the criteria
+		for (let i = 0; i < event.results[0].length; ++i) {
+			let num = 0; // num is the num of words that meet the criteria
+			const arr = event.results[0][i].transcript.toUpperCase().split(" "); // the array of words
+			for (let a = 0; a < arr.length; ++a) {
+				if (this.word_condition(arr[a]))
+					num += 1; // add one for every words that satisfies the criteria
 			}
-			potential_actions.push({action: "append", words: words, condition: word_condition})
-		} else if (results[i].length == this.interim_transcript.length) {
-			if ( index(results[i], -1).length > index(this.interim_transcript, -1).length && word_condition(index(results[i], -1)) ) // see if the new word is longer
-				return {action: "replace", word: index(results[i], -1)};
+			if (result.num < num || (result.num == num && result.confidence < event.results[0][i].confidence))
+				result = {num: num, confidence: event.results[0][i].confidence, arr: arr};
 		}
-	}
-}*/
+		result = result.arr;
 
-_handle_result(event) {
-	if (!event.isFinal) {
-		let unsorted = [];
-		for (let i = 0; i < event.results[0].length; ++i) { // convert to an array
-			unsorted.push(event.results[0][i]);
-		}
-		const sorted = sort(unsorted, "confidence"); // sort in order of confidence
-		sorted.reverse(); // order them from most to least confident
-		for (let i = 0; i < sorted.length; ++i) { // split the long strings into arrays of words
-			sorted[i] = sorted[i].transcript.split(" ");
-		}
+		console.log(result);
+		
+		// we now want to find the timestamp for each word, we do this using the interim results
+		//const frame_one = result.slice(0, result.length - 2);
+		//const frame_two = result.slice(0, result.length - 1);
 
-		//console.log(sorted);
+		/*
+		we want to find the time when each word was said, we do this using the interim results
+		this interim results are stored as lists of words, like the final result
+		however, sometime a shorter section of a words will be recorded first
+		e.g. pledge becomes pleasure a half second later
+		the actual time the word was said was on pledge though
+		so we actually find the interim result when the list was the final result minus the word we're looking for (and all those after)
+		and take the timestamp of the interim result immediately after that
+		*/
 
-		for (let i = sorted[0].length - this.interim_transcript.length; i > 0; --i) {
-			this.interim_transcript.push({time: event.timeStamp - this.start_time, word: sorted[0][sorted[0].length - i]});
-		}
+		// make an array to hold the timestamps, indexes will correspond to words in result array
+		const times = [this.interim_results[0].time];
 
-		console.log(this.interim_transcript);
+		let prev_index = 0;
 
-		/*for (let i = 0; i < sorted.length; ++i) {
-			for (let a = 0; a < sorted[i].length; ++a) {
-				if ()
+		// go through all the words in result
+		for (let i = 1; i < result.length; ++i) {
+
+			console.log("NOW LOOKING FOR TIMESTAMP FOR",
+				result[i],
+				"BY LOOKING FOR",
+				result.slice(0, i));
+
+			let index = -1;
+			let found = false;
+
+			for (let a = prev_index; a < this.interim_results.length; ++a) {
+
+				// if we haven't found result[i] minus the last word yet, do this
+				if (!found) {
+
+					//if (sort(this.interim_results[a].arr, "length")[0].length > i) {
+					if (get_min_max(this.interim_results[a].arr, "length").min > i) {
+						index = a - 1;
+						break;
+					}
+
+					console.log("IN", this.interim_results[a]);
+
+					for (let b = 0; b < this.interim_results[a].arr.length; ++b) {
+						if ( JSON.stringify(this.interim_results[a].arr[b].slice(0, i)) == JSON.stringify(result.slice(0, i)) ) {
+							found = true;
+							a = a - 1;
+							console.log("FOUND IT\nNOW LOOKING FOR WHERE THE TRANSCRIPT IS LONGER");
+							break;
+						}
+					}
+
+				// this part is if we are now looking for when the word whose timestamp we want (or part of it) gets added
+				} else {
+
+					console.log("IN", this.interim_results[a]);
+
+					// get the greatest word length from the transcripts returned in the current interim result (interim_results[a])
+					let greatest_length = 0;
+					for (let b = 0; b < this.interim_results[a].arr.length; ++b) {
+						if (this.interim_results[a].arr[b].length > greatest_length)
+							greatest_length = this.interim_results[a].arr[b].length;
+					}
+
+					// if that length is the same as the result we're looking for (result[i]), we have found the result whose timestamp we want
+					if (i + 1 <= greatest_length) {
+						index = a;
+						console.log("FOUND IT (2)");
+						break;
+					}
+
+				}
+
+			}
+
+			// TODO  could we make it so it starts searching at the index of the previous one, as we never want a negative interval anyway?
+			// TODO also inconsistency in approach for finding min/max properties, maybe write seperate functions instead of trying to use sort() unnecessarily
+			// TODO could stop using new Array().concat and just use .concat on the array instead?
+
+			if (index != -1) {
+				times.push(this.interim_results[index].time);
+				prev_index = index;
+			} else if (i + 1 == result.length) {
+				times.push(event.timeStamp - this.start_time);
+			} else {
+				times.push(times[times.length - 1]);
+				prev_index = 0;
 			}
 		}
 
-		for (let i = 0; i < sorted.length; ++i) { // go through and try and find one matching criteria, add first element if not
-			if (_word_condition(sorted[i].transcript)) {
-				this.interim_transcript.push(sorted[i].transcript);
-				break;
-			}
-			if (i == sorted.length - 1)
-				this.interim_transcript.push(sorted[0].transcript);
-		}*/
-	} else {
-		for (let i = 0; i < this.interim_transcript.length; ++i) {
-			this.transcript.push(this.interim_transcript[i]);
+		for (let i = 0; i < result.length; ++i) {
+			result[i] = {word: result[i], time: Math.round(times[i])};
 		}
-		this.interim_transcript = [];
-	}
-}
 
-record_speech(time) {
-	return new Promise( (resolve) => {
-		this.recognition.addEventListener("result", (event) => {this._handle_result(event);});
-		this.recognition.start();
-		this.start_time = new Event("").timeStamp;
-		setTimeout( () => {
-			this.recognition.removeEventListener("result", (event) => {this._handle_result(event);});
-			this.recognition.stop();
-			for (let i = 0; i < this.interim_transcript.length; ++i) {
-				this.transcript.push(this.interim_transcript[i]);
-			}
-			resolve();
-		}, time );
-	});
-}
+		console.log(result);
+		//this.transcript = new Array().concat(this.transcript, result);
+		this.transcript = this.transcript.concat(result);
 
-// function to record audio from the user for the number of ms passed to it in the argument
-// the return is a Promise object with properties for data (the format the audio is in), and blob (the media blob containing the audio)
-// TODO maybe allow another argument to be passed to record_audio, containing a function to be executed when we start or stop recording, to indicate to the user
-// this function would probably be passed a bool so it knows whether we're starting or stopping, or there could be two functions
-record_audio(time) {
-    let stream;
-    return navigator.mediaDevices.getUserMedia({video: false, audio: true})
-    .then( (data) => {return stream = data;})
-    .then( () => {
-        //console.log("speech start");
-        //console.log(speech_start = new Event("").timeStamp);
-        // the reason for manually defining mimeType is twofold: we can set a preference order for types, and we can store the mimeTypes, as the MediaRecorder object does not seem to know otherwise
-        let type;
-        let recorder;
-        // TODO could seperate getting the mimetype into another function
-        const types = ["audio/mp4", "audio/webm", "audio/ogg", "audio/mpeg", "audio/flac", "audio/wave", "audio/wav", "audio/xwav", "audio/x-pn-wav", "audio/aac", "audio/opus", "audio/3gpp"];
-        for (let i = 0; i < types.length; ++i) {
-            if (MediaRecorder.isTypeSupported(types[i])) {
-                type = types[i];
-                recorder = new MediaRecorder(stream, {mimeType: type});
-                break;
-            } else if (i == types.length - 1) {
-                type = "audio/unknown";
-                recorder = new MediaRecorder(stream);
-            }
+		console.log("INTERIM RESULT LIST: (AS OF FINAL RESULT)", this.interim_results);
+		this.interim_results = [];
+
+		/*for (let i = 0; i < this.interim_transcript.length; ++i) {
+            this.transcript.push(this.interim_transcript[i]);
         }
-        //console.log("Recording started. Start time recorded now at:");
-        //console.log("\t" + (start_time = new Event("").timeStamp));
-        return new Promise( (resolve) => {
-            let data = [];
-            // for now, dataavailable is only fired on recorder.stop(), but this may change in future if we wish to process the data during recording
-            recorder.addEventListener("dataavailable", (event) => {
-                data.push(event.data);
-            });
-            recorder.addEventListener("stop", (event) => {
-                stream.getTracks()[0].stop();
-				this.audio = {blob: new Blob(data), type: type};
-                resolve({blob: new Blob(data), type: type});
-            });
-            recorder.start();
-            setTimeout( () => {recorder.stop();}, time );
-        });
-    });
+        this.interim_transcript = [];*/
+    } else {
+
+		const arr = [];
+
+		for (let i = 0; i < event.results[0].length; ++i) {
+			arr.push(event.results[0][i].transcript.toUpperCase().split(" "));
+		}
+
+		this.interim_results.push({arr: arr, time: event.timeStamp - this.start_time});
+		console.log(this.interim_results[this.interim_results.length - 1]);
+
+	}
+}
+
+// get speech said verbally by the user, time to be given in ms, indicator will show when recognition is occuring, audio is whether or not we should record audio with it
+get_speech(time, audio = false, recog_indicator = {innerHTML: ""}, audio_indicator = {innerHTML: ""}) {
+
+	// add the event listeners
+	this.recognition.addEventListener( "result", (event) => {this.handle_result(event);} );
+	this.recognition.addEventListener( "end", this.recognition.start );
+
+	// return is a promise which resolves when the listening (for speech) is finished
+	return (() => {
+		if (audio)
+			return this.start_audio();
+		else
+			return Promise.resolve();
+	})().then( () => {return new Promise( (resolve) => {
+
+		this.start_time = new Event("").timeStamp;
+		audio_indicator.innerHTML = "RECORDING AUDIO NOW";
+
+		// the first promise resolves when recognition has actually started (when user has given permission)
+		this.recognition.addEventListener( "start", (event) => {
+			this.recog_start_time = event.timeStamp;
+			resolve();
+		}, {once: true} ); // we set the once option to true to specify the listener should be removed after one use
+
+		// actually start recognition
+		this.recognition.start();
+
+	})}).then( () => {return new Promise( (resolve) => {
+
+		recog_indicator.innerHTML = "LISTENING FOR SPEECH NOW";
+
+		// this function will execute after the specified period of time
+		setTimeout( () => {
+
+			// remove the event listeners
+			this.recognition.removeEventListener( "result", (event) => {this.handle_result(event);} );
+			this.recognition.removeEventListener( "end", this.recognition.start );
+
+			// add an event listener to resolve the promise when recognition has actually stopped
+			this.recognition.addEventListener("end", () => {
+				resolve();
+			}, {once: true});
+
+			// stop recognition
+			this.recognition.stop();
+
+		}, time);
+
+	})}).then( () => {
+
+		recog_indicator.innerHTML = "";
+
+		if (!this.prev_event.results[0].isFinal) { // if the last event was not a final result, treat the last interim result as one
+			this.handle_result(this.prev_event, true);
+		}
+
+		if (audio)
+			return this.stop_audio();
+		else
+			return Promise.resolve();
+
+	}).then( () => {
+
+		audio_indicator.innerHTML = "";
+		return;
+
+	});
+
+}
+
+gen_csv() {
+	let csv = "Word,Time,Interval\n";
+	for (let i = 0; i < this.transcript.length; ++i) {
+        csv += this.transcript[i].word
+            + ","
+            + this.transcript[i].time
+			+ ",";
+		if (i != 0)
+			csv += (this.transcript[i].time - this.transcript[i-1].time);
+		csv += "\n";
+    }
+	return csv;
 }
 
 }

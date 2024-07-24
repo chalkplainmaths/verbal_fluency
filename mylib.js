@@ -55,12 +55,12 @@ function wait_button(button_name) {
     });
 }
 
-function index(array, index) {
+/*function index(array, index) {
 	if (index > -1) {
 		return array[index];
 	}
 	return array[array.length + index];
-}
+}*/
 
 /*
 get nested properties from within an object
@@ -85,6 +85,13 @@ function get_nested(object, property) {
 		value = value[property_copy[0]];
 	}
 	return value;
+}
+
+function get_min_max(arr, property) {
+	property_arr = [];
+	arr.every( (el) => {property_arr.push( get_nested(el, property) ); return true;} );
+	property_arr.sort();
+	return {min: property_arr[0], max: property_arr[property_arr.length - 1]};
 }
 
 /*

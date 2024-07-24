@@ -18,7 +18,39 @@ fluency.init();
 let participant_id;
 let pavlovia = new Pavlovia();
 
-get_submission("Participant ID", true, true)
+/*const button = document.body.appendChild(document.createElement("button"));
+button.innerHTML = "start listening";
+button.addEventListener( "click", (event) => {*/
+wait_button("start listening")
+.then( () => {
+	const audio_indicator = document.body.appendChild(document.createElement("p"));
+	const recog_indicator = document.body.appendChild(document.createElement("p"));
+	return fluency.get_speech(7000, true, recog_indicator, audio_indicator);
+}).then( () => {
+	console.log(fluency.transcript);
+	const csv = fluency.gen_csv();
+	//const text = document.body.appendChild(document.createElement("p"));
+	//text.innerHTML = csv;
+	console.log(csv);
+	const link = document.body.appendChild(document.createElement("a"));
+    link.innerHTML = "local download";
+    link.download = "audio." + fluency.mime_type.split("/")[1];
+    link.href = URL.createObjectURL(fluency.audio_blob);
+});
+
+/*wait_button("start listening")
+.then( () => {
+	return get_speech(10000);*/
+//	return Promise.all([
+//		get_speech(10000)
+		//record_audio(10000); // TODO the audio recording and speech getting can't be done seperately
+// I think what wants to be done here is we start recording audio, collect speech, then stop recording audio. We prefer to have excess audio than not have audio for some speech.
+/*	]);
+}).then( () => {
+	console.log(fluency.transcript);
+});*/
+
+/*get_submission("Participant ID", true, true)
 .then( (data) => {participant_id = data; return wait_button("RECORD")} )
 .then( () => {return new Promise( (resolve) => {
 	let done = false;
@@ -39,7 +71,7 @@ get_submission("Participant ID", true, true)
 })})
 // comment / uncomment to enable or disable pavlovia server comms
 .then( () => {return pavlovia.start();} )
-.then( () => {
+then( () => {
     uploading = document.body.appendChild(document.createElement("p"));
     uploading.innerHTML = "UPLOADING";
 	let mystring = "";
@@ -62,7 +94,7 @@ get_submission("Participant ID", true, true)
     link.innerHTML = "local download";
     link.download = "audio." + fluency.audio.type.split("/")[1];
     link.href = URL.createObjectURL(fluency.audio.blob);
-});
+});*/
 	</script>
 </body>
 </html>
