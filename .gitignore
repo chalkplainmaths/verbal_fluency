@@ -37,3 +37,8 @@ Temporary Items
 # End of https://www.toptal.com/developers/gitignore/api/macos
 
 lib
+
+*.swp
+*.old
+.*
+old_pavlovia.js
