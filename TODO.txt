@@ -1,12 +1,5 @@
---> test how accurate the timestamping is, using excel
---> clean up code and upload to pavlovia
---> clean up the main promise chain code
---> add the word condition stuff (add semantic categories and a way to pick what you want)
-DOING NOW!! --> add audio recording the speech collecting code --> now need to make the audio recording available for download and get some data
---> error checking
---> analysis process:
-repeat script
-vlc convert to mp3
-garageband get timestamps
-excel compare
-could improve by not needing to timestamp manually (time consuming and not precise)
+--> change the data processing so it stays as a js object and is just converted to a csv when required
+--> add the functionality to change the test type between alphabet and semantic, with word_condition() changes
+--> clean up main promise chain code in index.html
+--> error checking in functions
+--> make it so that the test is carried according to spec
