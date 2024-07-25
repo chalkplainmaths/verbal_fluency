@@ -6,10 +6,29 @@ TODO _handle_result needs to sort through and get timestamps for words, continue
 
 class Fluency {
 
-constructor() {
+transcript = [];
+interim_results = [];
+audio_data = [];
+start_time;
+mime_types = ["audio/webm", "audio/mp4", "audio/ogg", "audio/mpeg", "audio/flac", "audio/wave", "audio/wav", "audio/xwav", "audio/x-pn-wav", "audio/aac", "audio/opus", "audio/3gpp"];
+
+constructor(type) {
+
+	this.test_type = type;
+
+	try {
+		this.recognition = new webkitSpeechRecognition();
+	} catch (error) {
+		this.recognition = new SpeechRecognition();
+	}
+	this.recognition.maxAlternatives = 99; // this is set to an arbitrarily high number as we just want as many as possible
+	this.recognition.interimResults = true;
+	this.recognition.continuous = false;
+	this.recognition.lang = "en-GB";
+
 }
 
-init() {
+/*init() {
 	try {
 		this.recognition = new webkitSpeechRecognition();
 	} catch(error) {
@@ -25,7 +44,7 @@ init() {
 	this.start_time;
 	this.mime_types = ["audio/webm", "audio/mp4", "audio/ogg", "audio/mpeg", "audio/flac", "audio/wave", "audio/wav", "audio/xwav", "audio/x-pn-wav", "audio/aac", "audio/opus", "audio/3gpp"];
 	this.event_log = [];
-}
+}*/
 
 get_mime_type() {
     for (let i = 0; i < this.mime_types.length; ++i) {
