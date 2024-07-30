@@ -153,10 +153,10 @@ handle_result(event, force_final = false) {
 				if (!found) {
 
 					//if (sort(this.interim_results[a].arr, "length")[0].length > i) {
-					if (get_min_max(this.interim_results[a].arr, "length").min > i) {
+					/*if (get_min_max(this.interim_results[a].arr, "length").min > i) {
 						index = a - 1;
 						break;
-					}
+					}*/
 
 					console.log("IN", this.interim_results[a]);
 
@@ -175,18 +175,24 @@ handle_result(event, force_final = false) {
 					console.log("IN", this.interim_results[a]);
 
 					// get the greatest word length from the transcripts returned in the current interim result (interim_results[a])
-					let greatest_length = 0;
+					/*let greatest_length = 0;
 					for (let b = 0; b < this.interim_results[a].arr.length; ++b) {
 						if (this.interim_results[a].arr[b].length > greatest_length)
 							greatest_length = this.interim_results[a].arr[b].length;
-					}
+					}*/
 
 					// if that length is the same as the result we're looking for (result[i]), we have found the result whose timestamp we want
-					if (i + 1 <= greatest_length) {
+					/*if (i + 1 <= greatest_length) {
 						index = a;
 						console.log("FOUND IT (2)");
 						break;
-					}
+					}*/
+
+					if (i + 1 <= get_min_max(this.interim_results[a].arr, "length").max) {
+						index = a;
+                        console.log("FOUND IT (2)");
+                        break;
+                    }
 
 				}
 
@@ -202,7 +208,8 @@ handle_result(event, force_final = false) {
 			} else if (i + 1 == result.length) {
 				times.push(event.timeStamp - this.start_time);
 			} else {
-				times.push(times[times.length - 1]);
+				times.push(NaN);
+				//times.push(times[times.length - 1]);
 				prev_index = 0;
 			}
 		}
