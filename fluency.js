@@ -83,6 +83,20 @@ stop_audio() {
 	});
 }
 
+new_word_condition(word) {
+
+	return fetch("https://api.dictionaryapi.dev/api/v2/entries/en/" + word, {method: "GET"}).then( (response) => {
+        if (!response.ok)
+			return false;
+		return response.json();
+    }).then( (json) => {
+		if (!json)
+			return false;
+		const meanings = json[0].meanings;
+	});
+
+}
+
 word_condition(word) {
 	if (word[0] == "P")
 		return true;
