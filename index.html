@@ -24,7 +24,7 @@ pavlovia.start()
 }).then( (id) => {
 	participant_id = id;
 	return wait_button("Start");
-.then( () => {
+}).then( () => {
 	const audio_indicator = document.body.appendChild(document.createElement("p"));
 	const recog_indicator = document.body.appendChild(document.createElement("p"));
 	return fluency.get_speech(10000, true, recog_indicator, audio_indicator);
