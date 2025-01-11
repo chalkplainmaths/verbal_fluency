@@ -20,7 +20,7 @@ let pavlovia = new Pavlovia();
 
 pavlovia.start()
 .then( () => {
-	return get_submission("Participant ID:");
+	return get_submission("Participant ID");
 }).then( (id) => {
 	participant_id = id;
 	return wait_button("Start");
