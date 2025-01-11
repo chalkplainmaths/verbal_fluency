@@ -1,5 +1,9 @@
 RESOLVED--> found an issue where I had a negative interval, check the handle_result() does what you want when e.g. ['PLETHORA', 'PLUMAGE', 'BLOOM', 'PRETEND'] is there instead of ['PLETHORA', 'PLUMAGE', 'PLUME', 'PRETEND'] pics on phone |RESOLVED -> in this situation we just give the time as NaN|
---> change the data processing so it stays as a js object and is just converted to a csv when required
+
+--> DOING NEXT --> change the word condition function to use the word list that has been added (add a comment about why lang is set to en-US as well)
+
+XX MAYBE DOESN'T NEED DOING XX --> change the data processing so it stays as a js object and is just converted to a csv when required
+
 --> add the functionality to change the test type between alphabet and semantic, with word_condition() changes
 --> clean up main promise chain code in index.html
 --> error checking in functions

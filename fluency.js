@@ -1,5 +1,7 @@
 /*
 
+Program written to allow user's to undertake the verbal fluency test online, written by Rory Phillips.
+
 TODO _handle_result needs to sort through and get timestamps for words, continue with this
 
 */
@@ -16,32 +18,19 @@ synonym_lists = {
 	animals: ["ANIMAL", "BEAST", "CREATURE", "PET", "INVERTEBRATE", "VERTEBRATE", "MAMMAL", "CARNIVORE", "HERBIVORE", "MOLUSC", "INSECT", "BIRD", "REPTILE", "AMPHIBIAN", "FISH", "ARTHROPOD"]
 };
 
-constructor(type, type_data) {
+constructor(type) {
 
-	this.test_type = type;
-	
-	if (this.test_type == "P") {
-		if (typeof type_data == "string" && type_data.length == 1) {
-			this.condition_data = type_data.toUpperCase();
-		} else {
-			throw "The type data passed to Fluency constructor was not a single letter string.";
-		}
-	} else if (this.test_type == "S") {
-		if (Array.isArray(type_data)) {
-			for (let i = 0; i < type_data.length; ++i) {
-				type_data[i] = type_data[i].toUpperCase();
-			}
-			this.condition_data = type_data;
-		} else {
-			const synonym_list = this.synonym_lists[type_data];
-			if (synonym_list != undefined) {
-				this.condition_data = synonym_list;
-			} else {
-				throw "The string passed to Fluency constructor was not the name of a built in semantic category.";
-			}
-		}
-	} else if (this.test_type != "P" && this.test_type != "S") {
-		throw "Invalid test type given to Fluency constructor.";
+	// if test type is given as a single letter string, test type will be assumed to be words beginning with said letter
+	// in any other case, test type will be assumed to be semantic in which case no checking will be done
+	// this will lead to semantic testing accepting all incorrect words, where as phonemic will reject them
+	// this should be noted when interpreting the data
+
+	//this.test_type = type;
+
+	if (typeof type == "string" && type.length == 1) {
+		this.type = type.toUpperCase();
+	} else {
+		this.type = "";
 	}
 
 	try {
@@ -52,27 +41,9 @@ constructor(type, type_data) {
 	this.recognition.maxAlternatives = 99; // this is set to an arbitrarily high number as we just want as many as possible
 	this.recognition.interimResults = true;
 	this.recognition.continuous = false;
-	this.recognition.lang = "en-GB";
+	this.recognition.lang = "en-US"; // this is set to American english because the word list we're using is (web2.txt)
 
 }
-
-/*init() {
-	try {
-		this.recognition = new webkitSpeechRecognition();
-	} catch(error) {
-		this.recognition = new SpeechRecognition();
-	}
-	this.recognition.maxAlternatives = 99; // this is set to an arbitrarily high number as we just want as many as possible
-	this.recognition.interimResults = true;
-	this.recognition.continuous = false;
-	this.recognition.lang = "en-GB";
-	this.transcript = [];
-	this.interim_results = [];
-	this.audio_data = [];
-	this.start_time;
-	this.mime_types = ["audio/webm", "audio/mp4", "audio/ogg", "audio/mpeg", "audio/flac", "audio/wave", "audio/wav", "audio/xwav", "audio/x-pn-wav", "audio/aac", "audio/opus", "audio/3gpp"];
-	this.event_log = [];
-}*/
 
 get_mime_type() {
     for (let i = 0; i < this.mime_types.length; ++i) {
@@ -111,39 +82,14 @@ stop_audio() {
 	});
 }
 
-new_word_condition(word) {
-
-	return fetch("https://api.dictionaryapi.dev/api/v2/entries/en/" + word, {method: "GET"}).then( (response) => {
-        if (!response.ok)
-			return false;
-		return response.json();
-    }).then( (json) => {
-		if (!json)
-			return false;
-		if (this.test_type == "P") {
-			if (word[0].toUpperCase() == this.condition_data)
-				return true;
-			return false;
-		}
-		const meanings = json[0].meanings;
-		for (let i = 0; i < meanings.length; ++i) {
-			for (let a = 0; a < meanings[i].definitions.length; ++a) {
-				console.log(meanings[i].definitions[a].definition);
-				for (let b = 0; b < this.condition_data.length; ++b) {
-					if (meanings[i].definitions[a].definition.toUpperCase().includes(this.condition_data[b]))
-						return true;
-				}
-			}
-		}
-		return false;
-	});
-
-}
-
 word_condition(word) {
-	if (word[0] == "P")
+	if (words.includes(word.toUpperCase()) && word.toUpperCase()[0] == this.type) {
+		console.log("PASSED:", word);
 		return true;
-	return false;
+	} else {
+		console.log("FAILED:", word);
+		return false;
+	}
 }
 
 handle_result(event, force_final = false) {
@@ -167,16 +113,15 @@ handle_result(event, force_final = false) {
 				if (this.word_condition(arr[a]))
 					num += 1; // add one for every words that satisfies the criteria
 			}
+			//console.log(arr, "SCORED", num, event.results[0][i].confidence);
 			if (result.num < num || (result.num == num && result.confidence < event.results[0][i].confidence))
 				result = {num: num, confidence: event.results[0][i].confidence, arr: arr};
 		}
 		result = result.arr;
 
-		console.log(result);
-		
+		console.log("SELECTED FINAL RESULT:", result);
+
 		// we now want to find the timestamp for each word, we do this using the interim results
-		//const frame_one = result.slice(0, result.length - 2);
-		//const frame_two = result.slice(0, result.length - 1);
 
 		/*
 		we want to find the time when each word was said, we do this using the interim results
@@ -247,13 +192,13 @@ handle_result(event, force_final = false) {
 
 					if (i + 1 <= get_min_max(this.interim_results[a].arr, "length").max) {
 						index = a;
-                        console.log("FOUND IT (2)");
-                        break;
-                    }
+            console.log("FOUND IT (2)");
+            break;
+          }
 
 				}
 
-			}
+			} // end of timestamping loop
 
 			// TODO  could we make it so it starts searching at the index of the previous one, as we never want a negative interval anyway?
 			// TODO also inconsistency in approach for finding min/max properties, maybe write seperate functions instead of trying to use sort() unnecessarily
@@ -286,7 +231,7 @@ handle_result(event, force_final = false) {
             this.transcript.push(this.interim_transcript[i]);
         }
         this.interim_transcript = [];*/
-    } else {
+		} else { // if we're dealing with an interim result
 
 		const arr = [];
 
