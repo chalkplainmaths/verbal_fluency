@@ -1,5 +1,5 @@
 /*
-Some standard functions for javascript written by Rory Phillips.
+Some standard functions for javascript written by chalkplainmaths.
 */
 
 function create_form(message) {
