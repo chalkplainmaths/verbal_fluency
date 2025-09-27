@@ -1,4 +1,5 @@
 // class to allow communication with the pavlovia api, heavily based off of ServerManager.js in the PsychoJS library
+// written by chalkplainmaths
 
 class Pavlovia {
     constructor() {
