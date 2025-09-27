@@ -1,6 +1,6 @@
 /*
 
-Program written to allow user's to undertake the verbal fluency test online, written by Rory Phillips.
+Program written to allow user's to undertake the verbal fluency test online, written by chalkplainmaths.
 
 TODO _handle_result needs to sort through and get timestamps for words, continue with this
 
